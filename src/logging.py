@@ -9,7 +9,7 @@ os.makedirs(log_path, exist_ok=True)
 LOG_LIFE_PATH=os.path.join(log_path, LOG_LIFE)
 
 logging.basicConfig(
-    filename=LOG_LIFE_PATH
+    filename=LOG_LIFE_PATH,
     format="[ %(asctime)s ] %(lineno)d %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO
 )

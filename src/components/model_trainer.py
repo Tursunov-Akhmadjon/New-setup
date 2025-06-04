@@ -40,7 +40,36 @@ class ModelTrainer:
                 "XGBoostRegressor": XGBRegressor()
             }
 
-            model_report: dict = evaluate_model(X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, model=models)
+            params = {
+                "Decision Tree": {
+                    'max_depth': [1,2,10,None],
+                    'min_sample_split': [1,3,5],
+                    'criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poisson']
+                },
+                "Random Forest":{
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "Gradient Boosting":{
+                    'learning_rate': [0.1,0.01,0.05,0.001],
+                    'subsample': [0.6,0.7,0.75,0.8,0.85,0.9],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "Linear Regression": {},
+                "XGBoost Regression": {
+                    'learning_rate': [0.1,0.01,0.05,0.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "AdaBoost Regression": {
+                    'learning_rate': [0.1,0.01,0.05,0.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+            }
+
+
+            model_report, best_model = evaluate_model(
+                X_train=X_train, y_train=y_train, 
+                X_test=X_test, y_test=y_test, 
+                model=models, param=params)
 
             best_model_name = max(model_report, key=model_report.get)
             best_model_score=model_report[best_model_name]
@@ -49,7 +78,7 @@ class ModelTrainer:
             if best_model_score < 0.6:
                 raise CustomException('Yomon Model: Tuning yoki boshqa model rivojlantirish methodi kerak!')
 
-            logging.info(f'Best Model Found: {best_model_name}')
+            logging.info(f'Best Model Found: {best_model_name} R2 score {best_model_score:.2f}')
 
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
